@@ -13,14 +13,16 @@ All Lucene features should be accessed in nordlys through this class.
 import argparse
 import lucene
 from java.io import File
+from java.nio.file import Paths
 from org.apache.lucene.analysis.standard import StandardAnalyzer
 from org.apache.lucene.document import Document
-from org.apache.lucene.document import Field
+from org.apache.lucene.document import Field, StoredField
 from org.apache.lucene.document import FieldType
 from org.apache.lucene.index import IndexWriter
 from org.apache.lucene.index import IndexWriterConfig
 from org.apache.lucene.index import DirectoryReader 
 from org.apache.lucene.index import Term
+from org.apache.lucene.index import IndexOptions
 from org.apache.lucene.search import IndexSearcher
 from org.apache.lucene.search import BooleanClause
 from org.apache.lucene.search import TermQuery
@@ -59,7 +61,7 @@ class Lucene(object):
             else:
                 lucene.initVM(vmargs=['-Djava.awt.headless=true'])
             lucene_vm_init = True
-        self.dir = SimpleFSDirectory(File(index_dir))
+        self.dir = SimpleFSDirectory(Paths.get(index_dir))
 
         self.use_ram = use_ram
         if use_ram:
@@ -74,12 +76,13 @@ class Lucene(object):
 
     def get_version(self):
         """Get Lucene version."""
-        return Version.LUCENE_48
+        #print Version.__dict__
+        return Version.LUCENE_6_5_0
 
     def get_analyzer(self):
         """Get analyzer."""
         if self.analyzer is None:
-            self.analyzer = StandardAnalyzer(self.get_version())
+            self.analyzer = StandardAnalyzer()
         return self.analyzer
 
     def open_reader(self):
@@ -120,7 +123,7 @@ class Lucene(object):
     def open_writer(self):
         """Open IndexWriter."""
         if self.writer is None:
-            config = IndexWriterConfig(self.get_version(), self.get_analyzer())
+            config = IndexWriterConfig(self.get_analyzer())
             config.setOpenMode(IndexWriterConfig.OpenMode.CREATE)
             self.writer = IndexWriter(self.dir, config)
         else:
@@ -141,7 +144,8 @@ class Lucene(object):
         """
         if self.ldf is None:  # create a single LuceneDocument object that will be reused
             self.ldf = LuceneDocument()
-        self.writer.addDocument(self.ldf.create_document(contents))
+        doc = self.ldf.create_document(contents)
+        self.writer.addDocument(doc)
 
     def get_lucene_document_id(self, doc_id):
         """Loads a document from a Lucene index based on its id."""
@@ -205,6 +209,8 @@ class LuceneDocument(object):
         with keys 'field_name', 'field_type', and 'field_value'."""
         doc = Document()
         for f in contents:
+            # TODO TC changed June 17
+            #print contents
             doc.add(Field(f['field_name'], f['field_value'],
                           self.ldf.get_field(f['field_type'])))
         return doc
@@ -215,30 +221,33 @@ class LuceneDocumentField(object):
 
     def __init__(self):
         """Init possible field types"""
-
         # FIELD_ID: stored, indexed, non-tokenized
         self.field_id = FieldType()
-        self.field_id.setIndexed(True)
+        #self.field_id.setIndexed(True)
+        self.field_id.setIndexOptions(IndexOptions.DOCS)
         self.field_id.setStored(True)
         self.field_id.setTokenized(False)
 
         # FIELD_ID_TV: stored, indexed, not tokenized, with term vectors (without positions)
         # for storing IDs with term vector info
         self.field_id_tv = FieldType()
-        self.field_id_tv.setIndexed(True)
+        #self.field_id_tv.setIndexed(True)
+        self.field_id_tv.setIndexOptions(IndexOptions.DOCS_AND_FREQS)
         self.field_id_tv.setStored(True)
         self.field_id_tv.setTokenized(False)
         self.field_id_tv.setStoreTermVectors(True)
 
         # FIELD_TEXT: stored, indexed, tokenized, with positions
         self.field_text = FieldType()
-        self.field_text.setIndexed(True)
+        #self.field_text.setIndexed(True)
+        self.field_text.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
         self.field_text.setStored(True)
         self.field_text.setTokenized(True)
 
         # FIELD_TEXT_TV: stored, indexed, tokenized, with term vectors (without positions)
         self.field_text_tv = FieldType()
-        self.field_text_tv.setIndexed(True)
+        #self.field_text_tv.setIndexed(True)
+        self.field_text_tv.setIndexOptions(IndexOptions.DOCS_AND_FREQS)
         self.field_text_tv.setStored(True)
         self.field_text_tv.setTokenized(True)
         self.field_text_tv.setStoreTermVectors(True)
@@ -246,7 +255,8 @@ class LuceneDocumentField(object):
         # FIELD_TEXT_TVP: stored, indexed, tokenized, with term vectors and positions
         # (but no character offsets)
         self.field_text_tvp = FieldType()
-        self.field_text_tvp.setIndexed(True)
+        #self.field_text_tvp.setIndexed(True)
+        self.field_text_tvp.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
         self.field_text_tvp.setStored(True)
         self.field_text_tvp.setTokenized(True)
         self.field_text_tvp.setStoreTermVectors(True)
