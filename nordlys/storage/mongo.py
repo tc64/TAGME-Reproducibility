@@ -34,7 +34,9 @@ class Mongo(object):
         """Returns all document content for a given document id."""
         print "Looking for ngram: %s" % doc_id
         print "escaped: %s" % self.escape(doc_id)
-        return self.get_doc(self.collection.find_one({Mongo.ID_FIELD: self.escape(doc_id)}))
+        doc = self.get_doc(self.collection.find_one({Mongo.ID_FIELD: self.escape(doc_id)}))
+        print doc
+        return doc
 
     def get_doc(self, mdoc):
         """Returns document contents with with keys and _id field unescaped."""
