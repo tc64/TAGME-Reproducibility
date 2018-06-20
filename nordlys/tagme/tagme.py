@@ -90,6 +90,7 @@ class Tagme(object):
         :return: disambiguated entities {men:en, ...}
         """
         # Gets the relevance score
+        # TODO this is the time bottleneck
         start_get_rel = time.time()
         rel_scores = {}
         for m_i in candidate_entities.keys():
@@ -207,7 +208,7 @@ class Tagme(object):
         ens_in_links = [self.__get_in_links([en_uri]) for en_uri in en_uris]
         if min(ens_in_links) == 0:
             return 0
-        conj = self.__get_in_links(en_uris)
+        conj = self.__get_in_links(en_uris)  # TODO this is redundant, we have already gotten inlinks for each en_uri in en_uris!
         if conj == 0:
             return 0
         numerator = math.log(max(ens_in_links)) - math.log(conj)
