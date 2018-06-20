@@ -23,7 +23,7 @@ WIKI_DISAMB30_SNIPPET = DATA_DIR + "/wiki-disamb30-snippet.txt"
 WIKI_DISAMB30_ANNOTATION = DATA_DIR + "/wiki-disamb30-annotation.txt"
 
 # Surface form dictionaries
-COLLECTION_SURFACEFORMS_WIKI = "surfaceforms_wiki-2018-06-15"
+COLLECTION_SURFACEFORMS_WIKI = "surfaceforms_wiki-20180615"
 SF_WIKI = SurfaceForms(collection=COLLECTION_SURFACEFORMS_WIKI)
 
 
