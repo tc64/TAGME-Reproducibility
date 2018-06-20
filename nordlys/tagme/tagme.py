@@ -205,9 +205,17 @@ class Tagme(object):
         if e1 == e2:  # to speed-up
             return 1.0
         en_uris = tuple(sorted({e1, e2}))
-        ens_in_links = [self.__get_in_links([en_uri]) for en_uri in en_uris]
+        """
+        uri2inlinks = self.__get_uri_to_inlinks(en_uris)
+        ens_in_links = [uri2inlinks[en_uri] for en_uri in en_uris]
+        """
+        ens_in_links = [self.__get_in_links([en_uri]) for en_uri in en_uris] # TODO do we really need entry in self.in_links for each [en_uri] separately?
         if min(ens_in_links) == 0:
             return 0
+
+        """
+        if sum(uri2inlinks.values()) == 0
+        """
         conj = self.__get_in_links(en_uris)  # TODO this is redundant, we have already gotten inlinks for each en_uri in en_uris!
         if conj == 0:
             return 0
@@ -218,13 +226,17 @@ class Tagme(object):
             return 0
         return rel
 
+    def __get_uri_to_inlinks(self, en_uris):
+        pass
+
+
     def __get_in_links(self, en_uris):
         """
         returns "and" occurrences of entities in the corpus.
 
         :param en_uris: list of dbp_uris
         """
-        en_uris = tuple(sorted(set(en_uris)))
+        en_uris = tuple(sorted(set(en_uris)))  # This increases speed
         if en_uris in self.in_links:
             return self.in_links[en_uris]
 
