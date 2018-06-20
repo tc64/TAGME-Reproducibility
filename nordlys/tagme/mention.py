@@ -27,7 +27,7 @@ class Mention(object):
     def __gen_matched_ens(self):
         """Gets all entities matching the n-gram"""
         if self.__matched_ens is None:
-            matches = SF_WIKI.get(self.text)
+            matches = SF_WIKI.get(self.text)  # Queries mongodb surface form dictionary
             matched_ens = matches if matches is not None else {}
             self.__matched_ens = matched_ens
         return self.__matched_ens

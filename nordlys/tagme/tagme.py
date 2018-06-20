@@ -72,11 +72,12 @@ class Tagme(object):
             ignore_m_i = False
             for j in range(i+1, len(sorted_mentions)):
                 m_j = sorted_mentions[j]
-                if (m_i in m_j) and (self.link_probs[m_i] < self.link_probs[m_j]):
+                if (m_i in m_j) and (self.link_probs[m_i] < self.link_probs[m_j]):  # filter substring mention only if link prob is less
                     ignore_m_i = True
                     break
             if not ignore_m_i:
                 candidate_entities[m_i] = ens[m_i]
+        print str(candidate_entities)
         return candidate_entities
 
     def disambiguate(self, candidate_entities):
