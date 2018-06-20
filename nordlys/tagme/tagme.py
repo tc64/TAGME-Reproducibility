@@ -219,7 +219,7 @@ class Tagme(object):
 
         term_queries = []
         for en_uri in en_uris:
-            term_queries.append(ANNOT_INDEX.get_id_lookup_query(en_uri, Lucene.FIELDNAME_CONTENTS))
+            term_queries.append(ANNOT_INDEX.get_id_lookup_query(en_uri, Lucene.FIELDNAME_CONTENTS))  # term_queries is a list of lucene TermQuery objects
         and_query = ANNOT_INDEX.get_and_query(term_queries)
         self.in_links[en_uris] = ANNOT_INDEX.searcher.search(and_query, 1).totalHits
         return self.in_links[en_uris]

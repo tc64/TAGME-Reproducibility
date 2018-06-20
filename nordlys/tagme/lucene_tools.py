@@ -171,17 +171,25 @@ class Lucene(object):
     def get_and_query(self, queries):
         """Creates an AND Boolean query from multiple Lucene queries """
         # empty boolean query with Similarity.coord() disabled
-        bq = BooleanQuery(False)
+        bq_builder = BooleanQuery.Builder()
+        bq_builder.setDisableCoord(False)
+
         for q in queries:
-            bq.add(q, BooleanClause.Occur.MUST)
+            bq_builder.add(q, BooleanClause.Occur.MUST)
+        bq = bq_builder.build()
+
         return bq
 
     def get_or_query(self, queries):
         """Creates an OR Boolean query from multiple Lucene queries """
         # empty boolean query with Similarity.coord() disabled
-        bq = BooleanQuery(False)
+        bq_builder = BooleanQuery.Builder()
+        bq_builder.setDisableCoord(False)
+
         for q in queries:
-            bq.add(q, BooleanClause.Occur.SHOULD)
+            bq_builder.add(q, BooleanClause.Occur.SHOULD)
+        bq = bq_builder.build()
+
         return bq
 
     def get_phrase_query(self, query, field):
