@@ -186,9 +186,11 @@ class Lucene(object):
 
     def get_phrase_query(self, query, field):
         """Creates phrase query for searching exact phrase."""
-        phq = PhraseQuery()
+        # NOTE: "slop" argument in phrasequery constructor would implement fuzzy matching
+        phq_builder = PhraseQuery.Builder()
         for t in query.split():
-            phq.add(Term(field, t))
+            phq_builder.add(Term(field, t))
+        phq = phq_builder.build()
         return phq
 
     def num_docs(self):
