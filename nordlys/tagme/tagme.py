@@ -77,8 +77,8 @@ class Tagme(object):
                     break
             if not ignore_m_i:
                 candidate_entities[m_i] = ens[m_i]
-        print str(candidate_entities)
-        print str(self.link_probs)
+        print "CANDIDATE ENTITIES: " + str(candidate_entities)
+        print "LINK PROBS: " + str(self.link_probs)
         return candidate_entities
 
     def disambiguate(self, candidate_entities):
