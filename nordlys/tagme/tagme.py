@@ -6,6 +6,7 @@ TAGME implementation
 
 import argparse
 import math
+import time
 from nordlys.config import OUTPUT_DIR
 from nordlys.tagme import config
 from nordlys.tagme import test_coll
@@ -89,6 +90,7 @@ class Tagme(object):
         :return: disambiguated entities {men:en, ...}
         """
         # Gets the relevance score
+        start_get_rel = time.time()
         rel_scores = {}
         for m_i in candidate_entities.keys():
             if self.DEBUG:
@@ -105,8 +107,10 @@ class Tagme(object):
                     rel_scores[m_i][e_m_i] += vote_e_m_j
                     if self.DEBUG:
                         print m_j, vote_e_m_j
+        time_get_rel = time.time() - start_get_rel
 
         # pruning uncommon entities (based on the paper)
+        start_prune_uncommon = time.time()
         self.rel_scores = {}
         for m_i in rel_scores:
             for e_m_i in rel_scores[m_i]:
@@ -115,8 +119,10 @@ class Tagme(object):
                     if m_i not in self.rel_scores:
                         self.rel_scores[m_i] = {}
                     self.rel_scores[m_i][e_m_i] = rel_scores[m_i][e_m_i]
+        time_prune_uncommon = time.time() - start_prune_uncommon
 
         # DT pruning
+        start_dt_prun = time.time()
         disamb_ens = {}
         for m_i in self.rel_scores:
             if len(self.rel_scores[m_i].keys()) == 0:
@@ -130,7 +136,11 @@ class Tagme(object):
                     best_en = en
                     best_cmn = cmn
             disamb_ens[m_i] = best_en
+        time_dt_prun = time.time() - start_dt_prun
 
+        print "TIME GET REL: " + str(time_get_rel)
+        print "TIME PRUNE UNCOMMON: " + str(time_prune_uncommon)
+        print "TIME DT PRUNE: " + str(time_dt_prun)
         return disamb_ens
 
     def prune(self, dismab_ens):
