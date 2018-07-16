@@ -343,6 +343,8 @@ class TagmeQueryProcessor(object):
 
         res_dict["el_cands"] = list()
         for men in tagme.link_probs:
+
+            # build element entry for this mention
             entry = dict()
             entry["str"] = men
             entry["start"] = -1  # TODO get this value
@@ -356,6 +358,8 @@ class TagmeQueryProcessor(object):
                 selected_ent_rho = linked_ens[men][1]
 
                 for wiki_uri_rel_pair in tagme.top_k_entities[men]:  # TODO handle case where nothing is there? possible?
+
+                    # build wikilink entry for this element entry
                     wiki_link_entry = dict()
                     wiki_uri = wiki_uri_rel_pair[0]
                     rel_score = wiki_uri_rel_pair[1]
@@ -366,6 +370,10 @@ class TagmeQueryProcessor(object):
                         wiki_link_entry["rho"] = selected_ent_rho
                     else:
                         wiki_link_entry["rho"] = None
+
+                    entry["wiki_links"].append(wiki_link_entry)  # add wikilink entry
+
+            res_dict["el_cands"].append(entry)  # add entry
 
         return res_dict
 
