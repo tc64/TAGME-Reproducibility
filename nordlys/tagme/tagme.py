@@ -48,7 +48,8 @@ class Tagme(object):
         from the linker. cmn_th is denoted be greek letter tau in the tagme papers. Note: There is another commonness
         threshold hard coded in Tagme.parse which is for initially enumerating candidates prior to pruning.
         :param k_th: k_th is the percentage of entity candidates that should appear in the list of possible targets for
-        a given phrase. k_th is used along with cmn_th for disambiguation and pruning process.
+        a given phrase. k_th is used along with cmn_th for disambiguation and pruning process. Note that this parameter
+        is called epsilon in the original tagme paper.
         :param sf_source: TODO explain this
         """
 
@@ -61,8 +62,10 @@ class Tagme(object):
         self.k_th = k_th  # 0.3
 
         self.link_probs = {}  # maps each candidate phrase to its link probability
+        self.candidate_entities = {}
         self.in_links = {}  #
         self.rel_scores = {}  # dictionary {men: {en: rel_score, ...}, ...}
+        self.top_k_entities = {}
         self.disamb_ens = {}  #
 
         self.sf_source = sf_source
@@ -104,6 +107,8 @@ class Tagme(object):
                     break
             if not ignore_m_i:
                 candidate_entities[m_i] = ens[m_i]
+
+        self.candidate_entities = candidate_entities
         print "CANDIDATE ENTITIES: " + str(candidate_entities)
         print "LINK PROBS: " + str(self.link_probs)
 
@@ -160,10 +165,12 @@ class Tagme(object):
 
             # isolate top k entities based on rel score
             top_k_ens = self.__get_top_k(m_i)
+            self.top_k_entities[m_i] = top_k_ens
 
             #pdb.set_trace()
 
             # select the entity from the top k with the best commonness
+            # TODO Whether this is how the top is selected, or something else, etc., should be configurable.
             best_cmn = 0
             best_en = None
             for en in top_k_ens:
@@ -178,7 +185,7 @@ class Tagme(object):
         print "TIME PRUNE UNCOMMON: " + str(time_prune_uncommon)
         print "TIME DT PRUNE: " + str(time_dt_prun)
 
-        pdb.set_trace()
+        #pdb.set_trace()
 
         return disamb_ens
 
@@ -293,6 +300,9 @@ class Tagme(object):
         k = int(round(len(self.rel_scores[mention].keys()) * self.k_th))
         k = 1 if k == 0 else k
         sorted_rel_scores = sorted(self.rel_scores[mention].items(), key=lambda item: item[1], reverse=True)
+
+        pdb.set_trace()
+        
         top_k_ens = []
         count = 1
         prev_rel_score = sorted_rel_scores[0][1]
