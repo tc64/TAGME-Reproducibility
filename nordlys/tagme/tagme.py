@@ -157,10 +157,13 @@ class Tagme(object):
         for m_i in self.rel_scores:
             if len(self.rel_scores[m_i].keys()) == 0:
                 continue
+
+            # isolate top k entities based on rel score
             top_k_ens = self.__get_top_k(m_i)
 
-            pdb.set_trace()
+            #pdb.set_trace()
 
+            # select the entity from the top k with the best commonness
             best_cmn = 0
             best_en = None
             for en in top_k_ens:
@@ -174,6 +177,9 @@ class Tagme(object):
         print "TIME GET REL: " + str(time_get_rel)
         print "TIME PRUNE UNCOMMON: " + str(time_prune_uncommon)
         print "TIME DT PRUNE: " + str(time_dt_prun)
+
+        pdb.set_trace()
+
         return disamb_ens
 
     def prune(self, dismab_ens):
