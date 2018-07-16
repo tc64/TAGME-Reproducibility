@@ -14,6 +14,8 @@ from nordlys.tagme.query import Query
 from nordlys.tagme.mention import Mention
 from nordlys.tagme.lucene_tools import Lucene
 
+import pdb
+
 
 ENTITY_INDEX = Lucene(config.INDEX_PATH)
 ANNOT_INDEX = Lucene(config.INDEX_ANNOT_PATH, use_ram=True)
@@ -58,10 +60,10 @@ class Tagme(object):
         self.cmn_th = cmn_th  # 0.02  # Tau in paper
         self.k_th = k_th  # 0.3
 
-        self.link_probs = {}
-        self.in_links = {}
+        self.link_probs = {}  # maps each candidate phrase to its link probability
+        self.in_links = {}  #
         self.rel_scores = {}  # dictionary {men: {en: rel_score, ...}, ...}
-        self.disamb_ens = {}
+        self.disamb_ens = {}  #
 
         self.sf_source = sf_source
 
@@ -71,7 +73,7 @@ class Tagme(object):
 
         :return: candidate entities {men:{en:cmn, ...}, ...}
         """
-        ens = {}
+        ens = {}  # candidate phrases are ngrams
         for ngram in self.query.get_ngrams():
             mention = Mention(ngram)
             # performs mention filtering (based on the paper)
@@ -84,7 +86,10 @@ class Tagme(object):
             self.link_probs[ngram] = link_prob
             # Filters entities by cmn threshold 0.001; this was only in TAGME source code and speeds up the process.
             # TAGME source code: it.acubelab.tagme.anchor (lines 279-284)
-            ens[ngram] = mention.get_men_candidate_ens(0.001)  # TODO configure this
+            # TODO configure this;
+            ens[ngram] = mention.get_men_candidate_ens(0.001)
+
+        pdb.set_trace()
 
         # filters containment mentions (based on paper)
         candidate_entities = {}
@@ -101,6 +106,9 @@ class Tagme(object):
                 candidate_entities[m_i] = ens[m_i]
         print "CANDIDATE ENTITIES: " + str(candidate_entities)
         print "LINK PROBS: " + str(self.link_probs)
+
+        pdb.set_trace()
+        
         return candidate_entities
 
     def disambiguate(self, candidate_entities):
