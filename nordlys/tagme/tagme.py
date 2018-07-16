@@ -73,7 +73,7 @@ class Tagme(object):
 
         :return: candidate entities {men:{en:cmn, ...}, ...}
         """
-        ens = {}  # candidate phrases are ngrams
+        ens = {}  # candidate phrases are ngrams; each is mapped to
         for ngram in self.query.get_ngrams():
             mention = Mention(ngram)
             # performs mention filtering (based on the paper)
@@ -87,12 +87,12 @@ class Tagme(object):
             # Filters entities by cmn threshold 0.001; this was only in TAGME source code and speeds up the process.
             # TAGME source code: it.acubelab.tagme.anchor (lines 279-284)
             # TODO configure this;
-            ens[ngram] = mention.get_men_candidate_ens(0.001)
+            ens[ngram] = mention.get_men_candidate_ens(0.001)  # dict of form {wiki uri: commonness}
 
-        pdb.set_trace()
+        #pdb.set_trace()
 
         # filters containment mentions (based on paper)
-        candidate_entities = {}
+        candidate_entities = {}  # {"mention string": {wikiUri: commonness}
         sorted_mentions = sorted(ens.keys(), key=lambda item: len(item.split()))  # sorts by mention length
         for i in range(0, len(sorted_mentions)):
             m_i = sorted_mentions[i]
@@ -107,8 +107,8 @@ class Tagme(object):
         print "CANDIDATE ENTITIES: " + str(candidate_entities)
         print "LINK PROBS: " + str(self.link_probs)
 
-        pdb.set_trace()
-        
+        #pdb.set_trace()
+
         return candidate_entities
 
     def disambiguate(self, candidate_entities):
@@ -158,6 +158,9 @@ class Tagme(object):
             if len(self.rel_scores[m_i].keys()) == 0:
                 continue
             top_k_ens = self.__get_top_k(m_i)
+
+            pdb.set_trace()
+
             best_cmn = 0
             best_en = None
             for en in top_k_ens:
