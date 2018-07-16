@@ -65,7 +65,7 @@ class Tagme(object):
         self.candidate_entities = {}
         self.in_links = {}  #
         self.rel_scores = {}  # dictionary {men: {en: rel_score, ...}, ...}
-        self.top_k_entities = {}
+        self.top_k_entities = {}  # {men: [(wikiUri, rel score)]} where the list is sorted greatest to least rel score.
         self.disamb_ens = {}  #
 
         self.sf_source = sf_source
@@ -165,7 +165,6 @@ class Tagme(object):
 
             # isolate top k entities based on rel score
             top_k_ens = self.__get_top_k(m_i)
-            self.top_k_entities[m_i] = top_k_ens
 
             #pdb.set_trace()
 
@@ -300,9 +299,9 @@ class Tagme(object):
         k = int(round(len(self.rel_scores[mention].keys()) * self.k_th))
         k = 1 if k == 0 else k
         sorted_rel_scores = sorted(self.rel_scores[mention].items(), key=lambda item: item[1], reverse=True)
-
+        self.top_k_entities[mention] = sorted_rel_scores
         pdb.set_trace()
-        
+
         top_k_ens = []
         count = 1
         prev_rel_score = sorted_rel_scores[0][1]
