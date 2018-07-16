@@ -360,7 +360,7 @@ class TagmeQueryProcessor(object):
                     wiki_uri = wiki_uri_rel_pair[0]
                     rel_score = wiki_uri_rel_pair[1]
                     wiki_link_entry["uri"] = wiki_uri
-                    wiki_link_entry["rel"] = rel_score[1]
+                    wiki_link_entry["rel"] = rel_score
                     wiki_link_entry["cmn"] = tagme.candidate_entities[men][wiki_uri]
                     if wiki_uri == selected_ent:
                         wiki_link_entry["rho"] = selected_ent_rho
