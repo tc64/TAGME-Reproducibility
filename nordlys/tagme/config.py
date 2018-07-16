@@ -29,3 +29,9 @@ SF_WIKI = SurfaceForms(collection=COLLECTION_SURFACEFORMS_WIKI)
 
 INDEX_PATH = "/datadrive/index"
 INDEX_ANNOT_PATH = "/datadrive/index-annot/"
+
+# Default parameter values
+RHO_TH = 0.20
+LINK_PROB_TH = 0.001
+CMNS_TH = 0.02
+K_TH = 0.30

@@ -17,9 +17,10 @@ class Query(object):
     def preprocess(input_str):
         """Pre-process the query; removes some special chars."""
         input_str = re.sub('[^A-Za-z0-9]+', ' ', input_str)
-        input_str = input_str.replace(" OR ", " ").replace(" AND ", " ")
+        #input_str = input_str.replace(" OR ", " ").replace(" AND ", " ")
         # removing multiple spaces
-        cleaned_str = ' '.join(input_str.split())
+        #cleaned_str = ' '.join(input_str.split())
+        cleaned_str = input_str
         return cleaned_str
 
     def get_ngrams(self):

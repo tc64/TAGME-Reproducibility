@@ -36,7 +36,7 @@ class Tagme(object):
 
         # TAMGE params
         self.link_prob_th = 0.001
-        self.cmn_th = 0.02
+        self.cmn_th = 0.02  # Tau in paper
         self.k_th = 0.3
 
         self.link_probs = {}
@@ -63,7 +63,7 @@ class Tagme(object):
             self.link_probs[ngram] = link_prob
             # Filters entities by cmn threshold 0.001; this was only in TAGME source code and speeds up the process.
             # TAGME source code: it.acubelab.tagme.anchor (lines 279-284)
-            ens[ngram] = mention.get_men_candidate_ens(0.001)
+            ens[ngram] = mention.get_men_candidate_ens(0.001)  # TODO configure this
 
         # filters containment mentions (based on paper)
         candidate_entities = {}
@@ -268,6 +268,70 @@ class Tagme(object):
         return top_k_ens
 
 
+class TagmeQueryProcessor(object):
+    """
+
+    """
+
+    def __init__(self):
+        """
+
+        """
+        self.rho_th = config.RHO_TH
+        self.lnk_prob_th = config.LINK_PROB_TH
+        self.cmn_th = config.CMNS_TH
+        self.k_th = config.K_TH
+
+    def _process_query(self, query_txt, rho_th, link_prob_th, cmn_th, k_th):
+        """
+
+        :param query_txt:
+        :param rho_th:
+        :param link_prob_th:
+        :param cmn_th:
+        :param k_th:
+        :return:
+        """
+
+        # TODO log steps here for debugging
+        # TODO generate qid when we are logging. can just make it query_timestamp
+
+        # create query and tagme objects
+        qid = 0
+        tagme = Tagme(Query(qid, query_txt), rho_th)
+
+        # run tagme steps: parse, disambiguate, and prune
+        cand_ens = tagme.parse()
+        disamb_ens = tagme.disambiguate(cand_ens)
+        linked_ens = tagme.prune(disamb_ens)
+
+        # build response dictionary from results
+        res_dict = dict()
+        res_dict["el_cands"] = linked_ens
+
+        return res_dict
+
+    def process_query(self, query_req_dict):
+        """
+        handle incoming query dictionary; choose thresholds/parameters values for this query; pass info to
+        helper method and get response dictionary to return.
+        :param query_req_dict:
+        :return: res_dict
+        """
+
+        query_txt = query_req_dict["text"]
+        rho_th = self.rho_th if "rho_th" not in query_req_dict else query_req_dict["rho_th"]
+        lnk_prob_th = self.lnk_prob_th if "lnk_prob_th" not in query_req_dict else query_req_dict["lnk_prob_th"]
+        cmn_th = self.cmn_th if "cmn_th" not in query_req_dict else query_req_dict["cmn_th"]
+        k_th = self.k_th if "k_th" not in query_req_dict else query_req_dict["k_th"]
+
+        res_dict = self._process_query(query_txt=query_txt, rho_th=rho_th, lnk_prob_th=lnk_prob_th, cmn_th=cmn_th,
+                                       k_th=k_th)
+
+        return res_dict
+
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-th", "--threshold", help="score threshold", type=float, default=0)
@@ -308,4 +372,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    #main()
+    qp = TagmeQueryProcessor()
+    print(qp.process_query({"text": "What Is Target Yield For Mexico 10 Year Government Bond By End Of 2018"}))
