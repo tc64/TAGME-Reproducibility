@@ -14,7 +14,7 @@ from nordlys.tagme.query import Query
 from nordlys.tagme.mention import Mention
 from nordlys.tagme.lucene_tools import Lucene
 
-import pdb
+#import pdb
 
 
 ENTITY_INDEX = Lucene(config.INDEX_PATH)
@@ -300,7 +300,7 @@ class Tagme(object):
         k = 1 if k == 0 else k
         sorted_rel_scores = sorted(self.rel_scores[mention].items(), key=lambda item: item[1], reverse=True)
         self.top_k_entities[mention] = sorted_rel_scores
-        pdb.set_trace()
+        #pdb.set_trace()
 
         top_k_ens = []
         count = 1
