@@ -29,20 +29,41 @@ class Tagme(object):
 
     DEBUG = 0
 
-    def __init__(self, query, rho_th, sf_source="wiki"):
-        self.query = query
-        self.rho_th = rho_th
-        self.sf_source = sf_source
+    def __init__(self, query, rho_th=.20, lnk_prob_th=.001, cmn_th=.02, k_th=.3, sf_source="wiki"):
+        """
+        a Tagme instance is created each time for each time a query is processed.
 
-        # TAMGE params
-        self.link_prob_th = 0.001
-        self.cmn_th = 0.02  # Tau in paper
-        self.k_th = 0.3
+        :param query: nordlys.tagme.query.Query
+        :param rho_th: Rho is the average between the coherence score and the link probability for a given
+        entity/phrase pair. rho_th is the minimum value for an entity/phrase pair to be included in the output for a
+        given phrase.
+        :param lnk_prob_th: the "link probability" of a phrase. link(a) / freq(a). This is the number of instances of
+        phrase a that appear as anchor text in the wikipedia data divided by the number of total times that phrase
+        appears in the wikipedia data. lnk_prob_th is the minimum link probability that a phrase must have to be
+        identified as a phrase that should be linked to a wikipedia article.
+        :param cmn_th: the "commonness" of a phrase is the probability P(page|anchor). For a particular anchor a, each
+        wikipedia page p has a P(p|a). cmn_th is the minimum commonness that a link must have to appear in the output
+        from the linker. cmn_th is denoted be greek letter tau in the tagme papers. Note: There is another commonness
+        threshold hard coded in Tagme.parse which is for initially enumerating candidates prior to pruning.
+        :param k_th: k_th is the percentage of entity candidates that should appear in the list of possible targets for
+        a given phrase. k_th is used along with cmn_th for disambiguation and pruning process.
+        :param sf_source: TODO explain this
+        """
+
+        self.query = query
+
+        # params
+        self.rho_th = rho_th
+        self.link_prob_th = lnk_prob_th  # 0.001
+        self.cmn_th = cmn_th  # 0.02  # Tau in paper
+        self.k_th = k_th  # 0.3
 
         self.link_probs = {}
         self.in_links = {}
         self.rel_scores = {}  # dictionary {men: {en: rel_score, ...}, ...}
         self.disamb_ens = {}
+
+        self.sf_source = sf_source
 
     def parse(self):
         """
@@ -298,7 +319,7 @@ class TagmeQueryProcessor(object):
 
         # create query and tagme objects
         qid = 0
-        tagme = Tagme(Query(qid, query_txt), rho_th)  # TODO doesn't use link prob th, cmn_th, or kth yet!
+        tagme = Tagme(Query(qid, query_txt), rho_th=rho_th, lnk_prob_th=lnk_prob_th, cmn_th=cmn_th, k_th=k_th)
 
         # run tagme steps: parse, disambiguate, and prune
         cand_ens = tagme.parse()
