@@ -14,7 +14,7 @@ from nordlys.tagme.query import Query
 from nordlys.tagme.mention import Mention
 from nordlys.tagme.lucene_tools import Lucene
 
-#import pdb
+import pdb
 
 
 ENTITY_INDEX = Lucene(config.INDEX_PATH)
@@ -351,6 +351,8 @@ class TagmeQueryProcessor(object):
         cand_ens = tagme.parse()
         disamb_ens = tagme.disambiguate(cand_ens)
         linked_ens = tagme.prune(disamb_ens)
+
+        pdb.set_trace()
 
         # build response dictionary from results
         res_dict = dict()
