@@ -282,7 +282,7 @@ class TagmeQueryProcessor(object):
         self.cmn_th = config.CMNS_TH
         self.k_th = config.K_TH
 
-    def _process_query(self, query_txt, rho_th, link_prob_th, cmn_th, k_th):
+    def _process_query(self, query_txt, rho_th, lnk_prob_th, cmn_th, k_th):
         """
 
         :param query_txt:
@@ -298,7 +298,7 @@ class TagmeQueryProcessor(object):
 
         # create query and tagme objects
         qid = 0
-        tagme = Tagme(Query(qid, query_txt), rho_th)
+        tagme = Tagme(Query(qid, query_txt), rho_th)  # TODO doesn't use link prob th, cmn_th, or kth yet!
 
         # run tagme steps: parse, disambiguate, and prune
         cand_ens = tagme.parse()
