@@ -61,6 +61,7 @@ class Tagme(object):
         self.cmn_th = cmn_th  # 0.02  # Tau in paper
         self.k_th = k_th  # 0.3
 
+        #self.men_to_methods = {}  # maps each mention to the name of the phrase extraction method used to find it TODO low priority
         self.link_probs = {}  # maps each candidate phrase to its link probability
         self.candidate_entities = {}
         self.in_links = {}  #
@@ -180,6 +181,7 @@ class Tagme(object):
             disamb_ens[m_i] = best_en
         time_dt_prun = time.time() - start_dt_prun
 
+        self.disamb_ens = disamb_ens
         print "TIME GET REL: " + str(time_get_rel)
         print "TIME PRUNE UNCOMMON: " + str(time_prune_uncommon)
         print "TIME DT PRUNE: " + str(time_dt_prun)
@@ -329,6 +331,44 @@ class TagmeQueryProcessor(object):
         self.cmn_th = config.CMNS_TH
         self.k_th = config.K_TH
 
+    def _build_response(self, tagme, linked_ens):
+        """
+        build response dictionary to return to caller. do not jsonify here.
+        :param tagme: Tagme object that has just processed a query (parse, disambig, prune)
+        :param linked_ens: output from prune step
+        :return: dictoinary confirming to current API spec
+        """
+
+        res_dict = dict()
+
+        res_dict["el_cands"] = list()
+        for men in tagme.link_probs:
+            entry = dict()
+            entry["str"] = men
+            entry["start"] = -1  # TODO get this value
+            entry["end"] = -1  # TODO get this value
+            entry["lnk_prob"] = tagme.link_probs[men]
+            entry["el_extr_mtds"] = [{"name": "wiki"}]  # TODO get this value correctly
+
+            entry["wiki_links"] = list()
+            if men in linked_ens:
+                selected_ent = linked_ens[men][0]
+                selected_ent_rho = linked_ens[men][1]
+
+                for wiki_uri_rel_pair in tagme.top_k_entities[men]:  # TODO handle case where nothing is there? possible?
+                    wiki_link_entry = dict()
+                    wiki_uri = wiki_uri_rel_pair[0]
+                    rel_score = wiki_uri_rel_pair[1]
+                    wiki_link_entry["uri"] = wiki_uri
+                    wiki_link_entry["rel"] = rel_score[1]
+                    wiki_link_entry["cmn"] = tagme.candidate_entities[men][wiki_uri]
+                    if wiki_uri == selected_ent:
+                        wiki_link_entry["rho"] = selected_ent_rho
+                    else:
+                        wiki_link_entry["rho"] = None
+
+        return res_dict
+
     def _process_query(self, query_txt, rho_th, lnk_prob_th, cmn_th, k_th):
         """
 
@@ -352,11 +392,10 @@ class TagmeQueryProcessor(object):
         disamb_ens = tagme.disambiguate(cand_ens)
         linked_ens = tagme.prune(disamb_ens)
 
-        pdb.set_trace()
+        #pdb.set_trace()
 
         # build response dictionary from results
-        res_dict = dict()
-        res_dict["el_cands"] = linked_ens
+        res_dict = self._build_response(tagme, linked_ens)
 
         return res_dict
 
@@ -378,7 +417,6 @@ class TagmeQueryProcessor(object):
                                        k_th=k_th)
 
         return res_dict
-
 
 
 def main():
