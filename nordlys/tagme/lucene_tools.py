@@ -9,7 +9,7 @@ All Lucene features should be accessed in nordlys through this class.
 @author: Krisztian Balog (krisztian.balog@uis.no)
 @author: Faegheh Hasibi (faegheh.hasibi@idi.ntnu.no)
 """
-
+import flask
 import argparse
 import lucene
 from java.io import File
@@ -192,6 +192,7 @@ class Lucene(object):
 
         return bq
 
+    @app.before_first_request
     def get_phrase_query(self, query, field):
         """Creates phrase query for searching exact phrase."""
         # NOTE: "slop" argument in phrasequery constructor would implement fuzzy matching
