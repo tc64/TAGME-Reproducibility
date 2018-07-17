@@ -9,7 +9,7 @@ All Lucene features should be accessed in nordlys through this class.
 @author: Krisztian Balog (krisztian.balog@uis.no)
 @author: Faegheh Hasibi (faegheh.hasibi@idi.ntnu.no)
 """
-import flask
+import time
 import argparse
 import lucene
 from java.io import File
@@ -199,8 +199,11 @@ class Lucene(object):
         # NOTE: "slop" argument in phrasequery constructor would implement fuzzy matching
 
         # TODO putting attachCurrentThread here may not be the right way to solve flask problem
+        # its not clear if this is a viable solution.
+        start = time.time()
         self.my_vm.attachCurrentThread()
-
+        print "[LUCENE TOOLS] attaching thread took:  " % str(time.time() - start)
+        
         phq_builder = PhraseQuery.Builder()
         for t in query.split():
             phq_builder.add(Term(field, t))
