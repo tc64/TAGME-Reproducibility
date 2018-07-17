@@ -23,7 +23,7 @@ def proc_q():
 
     # get qa_system
     params = dict((key, value) for key, value in request.json.iteritems())  # TODO if switch to python3 use items()
-    res = tqp.process_query()
+    res = tqp.process_query(params)
 
     return jsonify(res)
 

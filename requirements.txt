@@ -1,4 +1,5 @@
 requests
+flask
 pymongo>=2.7
 sphinx-bootstrap-theme>=0.4.0
 sphinxcontrib-httpdomain>=1.2.1
@@ -6,4 +7,3 @@ lxml>=2.3.2
 beautifulsoup4>=4.3.2
 numpy>=1.8.1
 nltk>=2.0.4
-flask
