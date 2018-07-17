@@ -202,8 +202,8 @@ class Lucene(object):
         # its not clear if this is a viable solution.
         start = time.time()
         self.my_vm.attachCurrentThread()
-        print "[LUCENE TOOLS] attaching thread took:  " % str(time.time() - start)
-        
+        print "[LUCENE TOOLS] attaching thread took:  %s" % str(time.time() - start)
+
         phq_builder = PhraseQuery.Builder()
         for t in query.split():
             phq_builder.add(Term(field, t))
