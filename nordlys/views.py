@@ -3,7 +3,7 @@ Run this to start service. specify configs in config.yaml in this directory.
 """
 
 
-
+# TODO weird import order here is artifact of trying to call attachCurrentThread at the right time. Problem still not solved see issue 2404.
 from nordlys.tagme.tagme import TagmeQueryProcessor
 tqp = TagmeQueryProcessor()
 print("Loaded TQP")
