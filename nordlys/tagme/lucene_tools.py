@@ -57,11 +57,11 @@ class Lucene(object):
             if jvm_ram:
                 # e.g. jvm_ram = "8g"
                 print "Increased JVM ram"
-                my_vm = lucene.initVM(vmargs=['-Djava.awt.headless=true'], maxheap=jvm_ram)
+                self.my_vm = lucene.initVM(vmargs=['-Djava.awt.headless=true'], maxheap=jvm_ram)
             else:
-                my_vm = lucene.initVM(vmargs=['-Djava.awt.headless=true'])
+                self.my_vm = lucene.initVM(vmargs=['-Djava.awt.headless=true'])
             lucene_vm_init = True
-            my_vm.attachCurrentThread()
+            self.my_vm.attachCurrentThread()
             print "attachCurrentThread called from object returned form initVM"
         self.dir = SimpleFSDirectory(Paths.get(index_dir))
 
@@ -197,6 +197,10 @@ class Lucene(object):
     def get_phrase_query(self, query, field):
         """Creates phrase query for searching exact phrase."""
         # NOTE: "slop" argument in phrasequery constructor would implement fuzzy matching
+
+        # TODO putting attachCurrentThread here may not be the right way to solve flask problem
+        self.my_vm.attachCurrentThread()
+
         phq_builder = PhraseQuery.Builder()
         for t in query.split():
             phq_builder.add(Term(field, t))
