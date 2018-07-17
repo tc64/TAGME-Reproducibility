@@ -12,7 +12,7 @@ from nordlys.tagme.tagme import TagmeQueryProcessor
 app = Flask(__name__, static_url_path='', static_folder='static')
 
 tqp = TagmeQueryProcessor()
-tqp.process_query({"text": "What Is Target Yield For Mexico 10 Year Government Bond By End Of 2018"}
+tqp.process_query({"text": "What Is Target Yield For Mexico 10 Year Government Bond By End Of 2018"})
 
 @app.route('/api/tagme/proc_query/v1', methods=['GET', 'POST'])
 def proc_q():
