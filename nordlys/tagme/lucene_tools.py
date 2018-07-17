@@ -201,7 +201,7 @@ class Lucene(object):
         # TODO putting attachCurrentThread here may not be the right way to solve flask problem
         # its not clear if this is a viable solution.
         start = time.time()
-        self.my_vm.attachCurrentThread()
+        #self.my_vm.attachCurrentThread()
         print "[LUCENE TOOLS] attaching thread took:  %s" % str(time.time() - start)
 
         phq_builder = PhraseQuery.Builder()

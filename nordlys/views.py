@@ -2,15 +2,13 @@
 Run this to start service. specify configs in config.yaml in this directory.
 """
 
-import requests
-import json
-from flask import Flask, request, jsonify
-from os.path import dirname, abspath
-from os.path import join
+
+
 from nordlys.tagme.tagme import TagmeQueryProcessor
-
 tqp = TagmeQueryProcessor()
+print("Loaded TQP")
 
+from flask import Flask, request, jsonify
 app = Flask(__name__, static_url_path='', static_folder='static')
 
 #tqp.process_query({"text": "What Is Target Yield For Mexico 10 Year Government Bond By End Of 2018"})
