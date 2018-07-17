@@ -14,3 +14,6 @@ OUTPUT_DIR = path.dirname(path.dirname(path.abspath(__file__))) + "/output"
 
 MONGO_DB = "nordlys"
 MONGO_HOST = "localhost"
+
+FLASK_PORT = 9002
+FLASK_HOST = '0.0.0.0'

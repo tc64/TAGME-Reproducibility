@@ -5,6 +5,7 @@ Run this to start service. specify configs in config.yaml in this directory.
 
 # TODO weird import order here is artifact of trying to call attachCurrentThread at the right time. Problem still not solved see issue 2404.
 from nordlys.tagme.tagme import TagmeQueryProcessor
+from nordlys import config
 tqp = TagmeQueryProcessor()
 print("Loaded TQP")
 
@@ -28,4 +29,4 @@ def proc_q():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=9002, debug=False)  # TODO configure port number; can put in config.py
+    app.run(host=config.FLASK_HOST, port=config.FLASK_PORT, debug=False)
