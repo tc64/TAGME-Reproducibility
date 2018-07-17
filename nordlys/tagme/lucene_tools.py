@@ -62,6 +62,7 @@ class Lucene(object):
                 my_vm = lucene.initVM(vmargs=['-Djava.awt.headless=true'])
             lucene_vm_init = True
             my_vm.attachCurrentThread()
+            print "attachCurrentThread called from object returned form initVM"
         self.dir = SimpleFSDirectory(Paths.get(index_dir))
 
         self.use_ram = use_ram
