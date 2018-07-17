@@ -468,5 +468,7 @@ def main():
 
 if __name__ == "__main__":
     #main()
+    import pprint
+    pp = pprint.PrettyPrinter(indent=2)
     qp = TagmeQueryProcessor()
-    print(qp.process_query({"text": "What Is Target Yield For Mexico 10 Year Government Bond By End Of 2018"}))
+    pp.pprint(qp.process_query({"text": "What Is Target Yield For Mexico 10 Year Government Bond By End Of 2018"}))
