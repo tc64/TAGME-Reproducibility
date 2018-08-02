@@ -6,7 +6,7 @@ from nordlys.tagme.config import RHO_TH, LINK_PROB_TH, CMNS_TH, K_TH
 class TagmeClient(object):
     def __init__(self):
         self.host = FLASK_HOST
-        self.post = FLASK_PORT
+        self.port = FLASK_PORT
         self.route = "/api/tagme/proc_query/v1"  # TODO coud pull from config if there
 
     def get_url(self):
