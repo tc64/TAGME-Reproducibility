@@ -2,31 +2,39 @@
 Run this to start service. specify configs in config.yaml in this directory.
 """
 
-
-# TODO weird import order here is artifact of trying to call attachCurrentThread at the right time. Problem still not solved see issue 2404.
 from nordlys.tagme.tagme import TagmeQueryProcessor
 from nordlys import config
-from nordlys.tagme.parsers import Parser
-
+from nordlys.tagme.parsers import *
+import spacy
+import pprint
 
 tqp = TagmeQueryProcessor()
 print("Loaded TQP")
 
-from nordlys.tagme.parsers import *
-import spacy
+
+# NOTE: Flask if imported here as part of attempt to figure out how to avoid having to call
+from flask import Flask, request, jsonify
+app = Flask(__name__, static_url_path='', static_folder='static')
+
 
 nlp = spacy.load('en')
+print("Loaded spaCy")
+
+# list of parsers to find possible element mentions that are not part of TAGME.
+# currently separate and there is no attempt to link these mentions.
 non_wiki_parsers = [get_simple_adj_n(nlp)]
+print("Loaded parsers external to tagme")
 
 
 def add_nonwiki_parser_output(text, parsers, response_dict):
-    # type: (str, list(Parser), dict)
     """
     add phrases spotted by parsers that are not internal to tagme.
     :param response_dict: response dict built by TagmeQueryProcessor
     :return:
     """
 
+    # map each element candidate phrase in the text to a dict mapping parser name to list of offset dictionaries.
+    # NOTE: offsets are not currently used.
     text_to_pname_to_offsets = dict()
     for p in parsers:
         txt_to_offsets = p.get_start_end_text(text)
@@ -45,11 +53,8 @@ def add_nonwiki_parser_output(text, parsers, response_dict):
                     "name": parser_name
                 })
 
-
-
-from flask import Flask, request, jsonify
-app = Flask(__name__, static_url_path='', static_folder='static')
-
+    pp = pprint.PrettyPrinter(indent=2)
+    pp.pprint(text_to_pname_to_offsets)
 
 
 @app.route('/api/tagme/proc_query/v1', methods=['GET', 'POST'])
