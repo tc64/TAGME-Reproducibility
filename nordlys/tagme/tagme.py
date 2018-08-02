@@ -350,7 +350,7 @@ class TagmeQueryProcessor(object):
             entry["start"] = -1  # TODO get this value
             entry["end"] = -1  # TODO get this value
             entry["lnk_prob"] = tagme.link_probs[men]
-            entry["el_extr_mtds"] = [{"name": "wiki"}]  # TODO get this value correctly
+            entry["el_extr_mtds"] = [{"name": "tagme_anchor"}]  # TODO get this value correctly
 
             entry["wiki_links"] = list()
             if men in linked_ens:
