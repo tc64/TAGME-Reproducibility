@@ -52,8 +52,8 @@ def get_textacy_np(nlp, drop_det=True):
     return matcher
 
 
-def get_textacy_ner_per_org_gpe_loc(nlp, drop_det=False):
-    matcher = SpacyBuiltinNERParser(nlp, drop_det=drop_det, include_types=["PERSON", "ORG", "GPE", "LOC"])
+def get_textacy_ner_per_org_gpe_loc(nlp, drop_det=False, name="spacy_ner_per_org_gpe_loc"):
+    matcher = SpacyBuiltinNERParser(nlp, drop_det=drop_det, include_types=["PERSON", "ORG", "GPE", "LOC"], name=name)
 
     return matcher
 
@@ -118,6 +118,9 @@ class SpacyBuiltinNERParser(SpacyBasedParser):
         gen = named_entities(sdoc, drop_determiners=self.drop_det, include_types=self.include_types,
                              exclude_types=self.exclude_types)
         matching_spans = [s for s in gen]
+        print("*********************")
+        print(matching_spans)
+        print("*****************")
 
         return matching_spans
 
