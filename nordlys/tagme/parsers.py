@@ -57,7 +57,7 @@ class Parser(object):
         self.name = name
 
 
-class SpacyBasedParser(object):
+class SpacyBasedParser(Parser):
     def __init__(self, nlp, name):
         self.nlp = nlp
         self.name = name
