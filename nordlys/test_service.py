@@ -3,6 +3,20 @@ import pprint
 from nordlys.config import FLASK_PORT, FLASK_HOST
 from nordlys.tagme.config import RHO_TH, LINK_PROB_TH, CMNS_TH, K_TH
 
+"""
+query_types = {
+    "required": {
+        "text": str
+    },
+    "optional": {
+        "lnk_prob": float,
+        "cmn_th": float,
+        "k_th": float,
+        "rho_th": float
+    }
+}
+"""
+
 class TagmeClient(object):
     def __init__(self):
         self.host = FLASK_HOST
@@ -38,6 +52,9 @@ class TagmeClient(object):
         myjs = res.json()
         pp = pprint.PrettyPrinter(indent=2)
         pp.pprint(myjs)
+
+        # check myjs for proper format.
+
 
 if __name__ == "__main__":
     import sys
