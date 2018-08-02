@@ -19,7 +19,7 @@ def get_matcher(pattern_name, patterns, nlp):
 def get_start_end_text_from_span(span):
     start = span.start_char
     end = span.end_char
-    mention_txt = span.text
+    mention_txt = span.text.lower()  # NOTE not necesarily same norm method as for tagme mentions; will fix when integrate parser framework into tagme
     mention = {"start": start, "end": end, "text": mention_txt}
 
     return mention
