@@ -52,6 +52,12 @@ def get_textacy_np(nlp, drop_det=True):
     return matcher
 
 
+def get_textacy_ner_per_org_gpe_loc(nlp, drop_det=False):
+    matcher = SpacyBuiltinNERParser(nlp, drop_det=drop_det, include_types=["PERSON", "ORG", "GPE", "LOC"])
+
+    return matcher
+
+
 class Parser(object):
     def __init__(self, name):
         self.name = name
@@ -71,7 +77,6 @@ class SpacyBasedParser(Parser):
 
     def get_start_end_text(self, text):
         """
-        TODO this and pos tag based matcher should have same super class, and this method should be impleented there, not copy/pasted here and in other classes using same method
         :param text:
         :return:
         """
@@ -96,6 +101,22 @@ class SpacyBuiltinNpParser(SpacyBasedParser):
     def get_matching_spans(self, text):
         sdoc = self.nlp(text)
         gen = noun_chunks(sdoc, drop_determiners=self.drop_det)
+        matching_spans = [s for s in gen]
+
+        return matching_spans
+
+
+class SpacyBuiltinNERParser(SpacyBasedParser):
+    def __init__(self, nlp, name="spacy_ner", drop_det=False, include_types=None, exclude_types=None):
+        super(SpacyBuiltinNERParser, self).__init__(nlp, name)
+        self.drop_det = drop_det
+        self.include_types=include_types
+        self.exclude_types=exclude_types
+
+    def get_matching_spans(self, text):
+        sdoc = self.nlp(text)
+        gen = named_entities(sdoc, drop_determiners=self.drop_det, include_types=self.include_types,
+                             exclude_types=self.exclude_types)
         matching_spans = [s for s in gen]
 
         return matching_spans

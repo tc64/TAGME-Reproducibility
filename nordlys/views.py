@@ -22,7 +22,8 @@ print("Loaded spaCy")
 
 # list of parsers to find possible element mentions that are not part of TAGME.
 # currently separate and there is no attempt to link these mentions.
-non_wiki_parsers = [get_simple_adj_n(nlp), get_compound_n(nlp), get_textacy_np(nlp)]
+non_wiki_parsers = [get_simple_adj_n(nlp), get_compound_n(nlp), get_textacy_np(nlp),
+                    get_textacy_ner_per_org_gpe_loc(nlp)]
 print("Loaded parsers external to tagme")
 
 
