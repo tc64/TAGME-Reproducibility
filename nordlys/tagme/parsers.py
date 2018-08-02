@@ -3,7 +3,7 @@ Query parsers for finding phrases that are not part of wikipedia anchor index.
 """
 
 from spacy.matcher import Matcher
-import textacy
+from textacy.extract import noun_chunks, named_entities
 
 
 #nlp = spacy.load('en')
@@ -28,7 +28,26 @@ def get_start_end_text_from_span(span):
 def get_simple_adj_n(nlp):
     pattern = [{'TAG': 'JJ'}, {'POS': 'NOUN'}]
     patterns = [pattern]
-    matcher = PosTagPatternMatcher(patterns, nlp, name="simple_adj_n")
+    matcher = SpacyPosTagPatternMatcherParser(patterns, nlp, name="simple_adj_n")
+
+    return matcher
+
+
+def get_compound_n(nlp, more_than_2=False):
+    if more_than_2:
+        pattern = [{'POS': 'NOUN'}, {'POS': 'NOUN'}, {'POS': 'NOUN', 'OP': '+'}]
+        name = "simple_n_n+"
+    else:
+        pattern = [{'POS': 'NOUN'}, {'POS': 'NOUN'}]
+        name = "simple_n_n"
+    patterns = [pattern]
+    matcher = SpacyPosTagPatternMatcherParser(patterns, nlp, name=name)
+
+    return matcher
+
+
+def get_textacy_np(nlp, drop_det=True):
+    matcher = SpacyBuiltinNpParser(nlp, drop_det=drop_det)
 
     return matcher
 
@@ -38,7 +57,39 @@ class Parser(object):
         pass
 
 
-class PosTagPatternMatcher(Parser):
+class SpacyBuiltinNpParser(Parser):
+    def __init__(self, nlp, name="spacy_np", drop_det=True):
+        self.nlp = nlp
+        self.name = name
+        self.drop_det = drop_det
+
+    def get_matching_spans(self, text):
+        sdoc = self.nlp(text)
+        gen = noun_chunks(sdoc, drop_determiners=self.drop_det)
+        matching_spans = [s for s in gen]
+
+        return matching_spans
+
+    def get_start_end_text(self, text):
+        """
+        TODO this and pos tag based matcher should have same super class, and this method should be impleented there, not copy/pasted here and in other classes using same method
+        :param text:
+        :return:
+        """
+
+        spans = self.get_matching_spans(text)
+        txt_to_offsets = dict()
+        for span in spans:
+            info = get_start_end_text_from_span(span)
+            if info["text"] not in txt_to_offsets:
+                txt_to_offsets[info["text"]] = list()
+            txt_to_offsets[info["text"]].append({"start": info["start"],
+                                                 "end": info["end"]})
+
+        return txt_to_offsets
+
+
+class SpacyPosTagPatternMatcherParser(Parser):
     def __init__(self, patterns, nlp, name):
         """
 
@@ -62,7 +113,7 @@ class PosTagPatternMatcher(Parser):
         matching_spans = [s for s in gen]
 
         return matching_spans
-        elapsed_total += time.time() - start
+
 
     def get_start_end_text(self, text):
         """
