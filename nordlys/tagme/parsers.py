@@ -61,12 +61,12 @@ class SpacyBasedParser(Parser):
     def __init__(self, nlp, name):
         self.nlp = nlp
         self.name = name
-        super(Parser, self).__init__(name)
+        super(SpacyBasedParser, self).__init__(name)
 
 
 class SpacyBuiltinNpParser(SpacyBasedParser):
     def __init__(self, nlp, name="spacy_np", drop_det=True):
-        super(SpacyBasedParser, self).__init__(nlp, name)
+        super(SpacyBuiltinNpParser, self).__init__(nlp, name)
         self.drop_det = drop_det
 
     def get_matching_spans(self, text):
