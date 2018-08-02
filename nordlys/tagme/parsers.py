@@ -56,8 +56,8 @@ class Parser(object):
     def __init__(self, name):
         self.name = name
 
-    def get_start_end_text(self, text):
-        raise NotImplementedError
+    #def get_start_end_text(self, text):
+     #   raise NotImplementedError
 
 
 class SpacyBasedParser(Parser):
@@ -66,8 +66,8 @@ class SpacyBasedParser(Parser):
         self.name = name
         super(SpacyBasedParser, self).__init__(name)
 
-    def get_matching_spans(self, text):
-        raise NotImplementedError
+    #def get_matching_spans(self, text):
+     #   raise NotImplementedError
 
     def get_start_end_text(self, text):
         """
@@ -86,7 +86,6 @@ class SpacyBasedParser(Parser):
                                                  "end": info["end"]})
 
         return txt_to_offsets
-
 
 
 class SpacyBuiltinNpParser(SpacyBasedParser):
