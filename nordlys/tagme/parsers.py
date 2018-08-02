@@ -107,7 +107,7 @@ class SpacyPosTagPatternMatcherParser(SpacyBasedParser):
 
         :param patters: list of spacy matcher patterns
         """
-        super(SpacyBuiltinNpParser, self).__init__(nlp, name)
+        super(SpacyPosTagPatternMatcherParser, self).__init__(nlp, name)
         self.patterns = patterns
         self.matcher = get_matcher(pattern_name=self.name, patterns=self.patterns, nlp=self.nlp)
 
