@@ -56,6 +56,9 @@ class Parser(object):
     def __init__(self, name):
         self.name = name
 
+    def get_start_end_text(self, text):
+        raise NotImplementedError
+
 
 class SpacyBasedParser(Parser):
     def __init__(self, nlp, name):
@@ -63,18 +66,8 @@ class SpacyBasedParser(Parser):
         self.name = name
         super(SpacyBasedParser, self).__init__(name)
 
-
-class SpacyBuiltinNpParser(SpacyBasedParser):
-    def __init__(self, nlp, name="spacy_np", drop_det=True):
-        super(SpacyBuiltinNpParser, self).__init__(nlp, name)
-        self.drop_det = drop_det
-
-    def get_matching_spans(self, text):
-        sdoc = self.nlp(text)
-        gen = noun_chunks(sdoc, drop_determiners=self.drop_det)
-        matching_spans = [s for s in gen]
-
-        return matching_spans
+    def get_start_end_text(self, text):
+        raise NotImplementedError
 
     def get_start_end_text(self, text):
         """
@@ -93,6 +86,20 @@ class SpacyBuiltinNpParser(SpacyBasedParser):
                                                  "end": info["end"]})
 
         return txt_to_offsets
+
+
+
+class SpacyBuiltinNpParser(SpacyBasedParser):
+    def __init__(self, nlp, name="spacy_np", drop_det=True):
+        super(SpacyBuiltinNpParser, self).__init__(nlp, name)
+        self.drop_det = drop_det
+
+    def get_matching_spans(self, text):
+        sdoc = self.nlp(text)
+        gen = noun_chunks(sdoc, drop_determiners=self.drop_det)
+        matching_spans = [s for s in gen]
+
+        return matching_spans
 
 
 class SpacyPosTagPatternMatcherParser(Parser):
@@ -119,22 +126,3 @@ class SpacyPosTagPatternMatcherParser(Parser):
         matching_spans = [s for s in gen]
 
         return matching_spans
-
-
-    def get_start_end_text(self, text):
-        """
-
-        :param text:
-        :return:
-        """
-
-        spans = self.get_matching_spans(text)
-        txt_to_offsets = dict()
-        for span in spans:
-            info = get_start_end_text_from_span(span)
-            if info["text"] not in txt_to_offsets:
-                txt_to_offsets[info["text"]] = list()
-            txt_to_offsets[info["text"]].append({"start": info["start"],
-                                                 "end": info["end"]})
-
-        return txt_to_offsets
