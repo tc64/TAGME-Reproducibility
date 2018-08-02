@@ -101,15 +101,14 @@ class SpacyBuiltinNpParser(SpacyBasedParser):
         return matching_spans
 
 
-class SpacyPosTagPatternMatcherParser(Parser):
+class SpacyPosTagPatternMatcherParser(SpacyBasedParser):
     def __init__(self, patterns, nlp, name):
         """
 
         :param patters: list of spacy matcher patterns
         """
+        super(SpacyBuiltinNpParser, self).__init__(nlp, name)
         self.patterns = patterns
-        self.nlp = nlp
-        self.name = name
         self.matcher = get_matcher(pattern_name=self.name, patterns=self.patterns, nlp=self.nlp)
 
     def get_matching_spans(self, text):
