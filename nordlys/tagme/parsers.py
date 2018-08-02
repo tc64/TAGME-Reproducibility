@@ -33,7 +33,12 @@ def get_simple_adj_n(nlp):
     return matcher
 
 
-class PosTagPatternMatcher(object):
+class Parser(object):
+    def __init__(self):
+        pass
+
+
+class PosTagPatternMatcher(Parser):
     def __init__(self, patterns, nlp, name):
         """
 
@@ -67,6 +72,12 @@ class PosTagPatternMatcher(object):
         """
 
         spans = self.get_matching_spans(text)
-        infos = [get_start_end_text_from_span(span) for span in spans]
+        txt_to_offsets = dict()
+        for span in spans:
+            info = get_start_end_text_from_span(span)
+            if info["text"] not in txt_to_offsets:
+                txt_to_offsets[info["text"]] = list()
+            txt_to_offsets[info["text"]].append({"start": info["start"],
+                                                 "end": info["end"]})
 
-        return infos
+        return txt_to_offsets
