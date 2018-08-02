@@ -66,7 +66,7 @@ class SpacyBasedParser(Parser):
         self.name = name
         super(SpacyBasedParser, self).__init__(name)
 
-    def get_start_end_text(self, text):
+    def get_matching_spans(self, text):
         raise NotImplementedError
 
     def get_start_end_text(self, text):
