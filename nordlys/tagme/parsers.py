@@ -53,14 +53,20 @@ def get_textacy_np(nlp, drop_det=True):
 
 
 class Parser(object):
-    def __init__(self):
-        pass
+    def __init__(self, name):
+        self.name = name
 
 
-class SpacyBuiltinNpParser(Parser):
-    def __init__(self, nlp, name="spacy_np", drop_det=True):
+class SpacyBasedParser(object):
+    def __init__(self, nlp, name):
         self.nlp = nlp
         self.name = name
+        super(Parser, self).__init__(name)
+
+
+class SpacyBuiltinNpParser(SpacyBasedParser):
+    def __init__(self, nlp, name="spacy_np", drop_det=True):
+        super(SpacyBasedParser, self).__init__(nlp, name)
         self.drop_det = drop_det
 
     def get_matching_spans(self, text):
