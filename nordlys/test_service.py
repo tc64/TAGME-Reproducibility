@@ -20,7 +20,7 @@ class TagmeClient(object):
         query_req_dict["cmn_th"] = cmn_th
         query_req_dict["k_th"] = k_th
 
-        res = requests.post(self.get_url(), params=query_req_dict)
+        res = requests.post(self.get_url(), json=query_req_dict)
         return res
 
     def issue_and_pprint_test_query(self, query_txt, rho_th, lnk_prob_th, cmn_th, k_th):
